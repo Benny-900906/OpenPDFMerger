@@ -58,9 +58,23 @@ Visit the one hosted on netlify [click here](https://open-pdf-merger.netlify.app
 
 ## 🖼️ Demo
 
+1. **Open PDF Merger**  
+   Either drag & drop your PDFs into the app, or select them from your device.  
 ![OpenPDFMerger Demo](./public/demo-1.png)
+
+2. **Reorder Files**  
+   Use the **↑** and **↓** buttons to arrange the PDFs in the desired order.  
+   Once ready, click **Merge & Preview**.  
 ![PDF Selection Demo](./public/demo-2.png)
+
+3. **Preview the Merge**  
+   A floating preview window will appear showing the merged PDF.  
+   You can resize or move the window as needed.  
+   When satisfied, click **Download**.  
 ![PDF Preview Demo](./public/demo-3.png)
+
+4. **Done! 🎉**  
+   Your merged PDF is instantly downloaded — everything stays on your device.  
 ![PDF Download Demo](./public/demo-4.png)
 
 ---

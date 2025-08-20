@@ -40,9 +40,9 @@ Run the development server:
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser
 or
-Visit the one hosted on netlify [click here](https://open-pdf-merger.netlify.app)
+Visit the one hosted on netlify [click here](https://open-pdf-merger.netlify.app).
 
 ---
 

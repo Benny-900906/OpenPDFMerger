@@ -58,6 +58,11 @@ Visit the one hosted on netlify [click here](https://open-pdf-merger.netlify.app
 
 ## 🖼️ Demo
 
+![OpenPDFMerger Demo](./public/demo-1.png)
+![PDF Selection Demo](./public/demo-2.png)
+![PDF Preview Demo](./public/demo-3.png)
+![PDF Download Demo](./public/demo-4.png)
+
 ---
 
 ## 🤝 Contributing

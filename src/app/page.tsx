@@ -1,9 +1,11 @@
-'use client'
+'use client';
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import { Dropzone } from "@/components/Home/Dropzone";
 import { FileThread } from "@/components/Home/FIleThread";
+import { FloatingWindow } from "@/components/Shared/FloatingWindow";
+import { PdfPreview } from "@/components/PDF/Preivew";
 
 // declared types
 type PdfFile = {
@@ -13,22 +15,30 @@ type PdfFile = {
   size: number; // bytes
 };
 
-// helper functions 
+// helpers
 const fmtBytes = (bytes: number) => {
   if (bytes === 0) return "0 B";
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"] as const;
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
-}
+};
 
 const uid = () => Math.random().toString(36).slice(2);
 
-// ---------- Component ----------
 export default function PdfMergerApp() {
   const [files, setFiles] = useState<PdfFile[]>([]);
   const [isMerging, setIsMerging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  // cleanup blob URLs
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const addFiles = useCallback((list: FileList | null) => {
     if (!list) return;
@@ -77,28 +87,25 @@ export default function PdfMergerApp() {
         pages.forEach((p) => outDoc.addPage(p));
       }
 
-      const outBytes = await outDoc.save({ addDefaultPage: false }); // Uint8Array<ArrayBufferLike>
+      // Uint8Array -> real ArrayBuffer for strict TS
+      const bytes: Uint8Array = await outDoc.save({ addDefaultPage: false });
+      const ab = new ArrayBuffer(bytes.byteLength);
+      new Uint8Array(ab).set(bytes);
 
-      // Make an ArrayBuffer that Blob accepts
-      const ab = new Uint8Array(outBytes).buffer; // copies; buffer is an ArrayBuffer
       const blob = new Blob([ab], { type: "application/pdf" });
-
       const url = URL.createObjectURL(blob);
 
-      const a = document.createElement("a");
-      a.href = url;
-      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
-      a.download = `merged-${stamp}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      // open floating preview (revoke previous if any)
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(url);
+      setIsPreviewOpen(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to merge. Please try different files.");
+      const message = err instanceof Error ? err.message : "Failed to merge. Please try different files.";
+      setError(message);
     } finally {
       setIsMerging(false);
     }
-  }, [files]);
+  }, [files, previewUrl]);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white px-4 py-12">
@@ -147,9 +154,14 @@ export default function PdfMergerApp() {
                 disabled={!canMerge}
                 className="px-4 py-2 font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-500 hover:cursor-pointer disabled:bg-emerald-900 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {isMerging ? "Merging…" : "Merge PDFs"}
+                {isMerging ? "Merging…" : "Merge & Preview"}
               </button>
-              <button onClick={clearAll} className="px-3 py-2 font-semibold rounded-xl bg-white/5 hover:bg-white/10 hover:cursor-pointer">Clear</button>
+              <button
+                onClick={clearAll}
+                className="px-3 py-2 font-semibold rounded-xl bg-white/5 hover:bg-white/10 hover:cursor-pointer"
+              >
+                Clear
+              </button>
             </div>
             {error && <div className="text-red-400 text-sm">{error}</div>}
           </div>
@@ -160,6 +172,19 @@ export default function PdfMergerApp() {
           <span className="mt-1">Encrypted PDFs aren’t supported by this project.</span>
         </div>
       </div>
+
+      {isPreviewOpen && previewUrl && (
+        <FloatingWindow
+          title="Merged PDF"
+          initialX={40}
+          initialY={40}
+          initialWidth={640}
+          initialHeight={420}
+          onClose={() => setIsPreviewOpen(false)}
+        >
+          <PdfPreview blobUrl={previewUrl} filename={`merged-${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}.pdf`} />
+        </FloatingWindow>
+      )}
     </div>
   );
 }

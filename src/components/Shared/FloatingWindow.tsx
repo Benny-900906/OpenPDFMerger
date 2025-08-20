@@ -88,12 +88,12 @@ export const FloatingWindow = ({
         className="cursor-grab active:cursor-grabbing select-none px-3 py-2 bg-neutral-900 flex items-center justify-between"
         onPointerDown={onHeaderPointerDown}
       >
-        <span className="text-sm font-semibold text-white/90">{title}</span>
+        <span className="text-sm font-bold text-white/90">{title}</span>
         <button
           onClick={onClose}
           // prevent the header's onPointerDown from initiating a drag when clicking close
           onPointerDown={(e) => e.stopPropagation()}
-          className="text-white/70 hover:text-white px-2 py-1 rounded-md hover:bg-white/10"
+          className="text-white/70 hover:text-white hover:cursor-pointer font-semibold px-2 py-1 rounded-md hover:bg-white/10"
           aria-label="Close"
         >
           ✕
@@ -108,7 +108,7 @@ export const FloatingWindow = ({
         onPointerDown={onResizePointerDown}
       >
         {/* simple corner glyph */}
-        <svg width="16" height="16" viewBox="0 0 16 16" className="opacity-40">
+        <svg width="18" height="18" viewBox="0 0 18 18" className="opacity-80">
           <path d="M6 10h6v2H6v-2zm0-4h10v2H6V6z" fill="currentColor" />
         </svg>
       </div>

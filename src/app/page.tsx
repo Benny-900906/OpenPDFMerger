@@ -6,6 +6,8 @@ import { Dropzone } from "@/components/Home/Dropzone";
 import { FileThread } from "@/components/Home/FIleThread";
 import { FloatingWindow } from "@/components/Shared/FloatingWindow";
 import { PdfPreview } from "@/components/PDF/Preivew";
+import Logo from '@/assets/logo.png';
+import Image from "next/image";
 
 // declared types
 type PdfFile = {
@@ -26,7 +28,7 @@ const fmtBytes = (bytes: number) => {
 
 const uid = () => Math.random().toString(36).slice(2);
 
-export default function PdfMergerApp() {
+export default function Home() {
   const [files, setFiles] = useState<PdfFile[]>([]);
   const [isMerging, setIsMerging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,9 +113,12 @@ export default function PdfMergerApp() {
     <div className="min-h-screen bg-neutral-950 text-white px-4 py-12">
       <div className="max-w-3xl mx-auto">
         <div className="mb-6 flex flex-col gap-1">
-          <span className="text-2xl font-bold">PDF Merger</span>
+          <div className="flex flex-row items-center gap-2">
+            <Image alt="Open PDF Merger Logo" src={Logo} className="w-10 h-10" />
+            <span className="text-2xl font-bold">Open PDF Merger</span>
+          </div>
           <span className="text-zinc-300 font-semibold">
-            Merge multiple PDF files right in your browser. Your files never leave your device.
+            Merge multiple PDF files right in your browser for free. Your files never leave your device.
           </span>
         </div>
 
